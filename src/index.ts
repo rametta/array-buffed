@@ -22,17 +22,21 @@
 
 type ExtractT<T> = T extends { t: infer K } ? K : never;
 
-type RemapTuple<T extends any[]> = {
+type RemapTuple<T extends unknown[]> = {
   [K in keyof T]: ExtractT<T[K]>;
 };
 
+/**
+ * The base Schema class for which to extend when creating new Schema subtypes, such as uint8, f32, etc...
+ */
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export abstract class Schema<const Name extends string = string, const T = any> {
-  readonly name: Name = undefined as any;
-  readonly label: string = undefined as any;
-  readonly t: T = undefined as any;
+  readonly name: Name = "" as Name;
+  readonly label: string = "";
+  readonly t: T = undefined as T;
   abstract encode(dataview: DataView, offset: number, value: T): void;
   abstract decode(dataview: DataView, offset: number): T;
-  abstract bytes(data: any[]): number;
+  abstract bytes(data: T[]): number;
 }
 
 class i8<const Label extends string> extends Schema<"Int8", number> {
@@ -233,7 +237,7 @@ class tuple<const Label extends string, const T extends Schema[]> extends Schema
   }
 
   decode(dataview: DataView, offset: number): RemapTuple<T> {
-    const results: RemapTuple<T> = [] as any;
+    const results: RemapTuple<T> = [] as RemapTuple<T>;
 
     let localOffset = 0;
     for (const element of this.elements) {
@@ -295,6 +299,11 @@ class array<const Label extends string, const T extends Schema> extends Schema<"
   }
 }
 
+/**
+ * Schema types that can be used for constructing a schema shape.
+ *
+ * Hint: start with a tuple.
+ */
 export const t = {
   i8: i8.t,
   u8: u8.t,
@@ -309,10 +318,26 @@ export const t = {
   tuple: tuple.t,
   array: array.t,
   // union: union.t // TODO
+  // enum: enum.t // TODO
 } as const;
 
+/**
+ * Helper type for extracting the Schema base type from the Schema.
+ *
+ * @example
+ * const schema = t.tuple("My Tuple", [t.u8(), t.u8()])
+ *
+ * type Schema = Infer<typeof schema>
+ * // Schema is type: [number, number]
+ */
 export type Infer<S extends Schema> = S["t"];
 
+/**
+ * Encode some data into a binary ArrayBuffer using the given schema.
+ * @param schema The schema to use to encode the data into binary.
+ * @param data The data to encode into the ArrayBuffer.
+ * @returns An ArrayBuffer that holds the binary data in the shape of the schema.
+ */
 export function encode<S extends Schema>(schema: S, data: Infer<S>): ArrayBuffer {
   const buffer = new ArrayBuffer(schema.bytes(data));
   const dataview = new DataView(buffer);
@@ -320,14 +345,32 @@ export function encode<S extends Schema>(schema: S, data: Infer<S>): ArrayBuffer
   return buffer;
 }
 
+/**
+ * Decode an existing ArrayBuffer using the given schema.
+ * @param schema The schema to use to decode the binary data.
+ * @param buffer The Array Buffer that holds the raw binary data.
+ * @returns The decoded data from the buffer that matches the schema shape.
+ */
 export function decode<S extends Schema>(schema: S, buffer: ArrayBuffer): Infer<S> {
   const dataview = new DataView(buffer);
   return schema.decode(dataview, 0);
 }
 
+/**
+ * Helpers for handling bits.
+ * Convert a uint8 number (0-255) to 8 bits, or 8 bits to one uint8 number for convenient storage.
+ */
 export namespace Bits {
+  /**
+   * 8 boolean values in a tuple.
+   */
   export type Type = [boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean];
 
+  /**
+   * Convert a bits tuple into a single uint8 number.
+   * @param bits The array of 8 boolean values.
+   * @returns The uint8 number (0-255) representing the bits.
+   */
   export function to(bits: Type): number {
     let uint8 = 0;
     for (let i = 0; i < 8; i++) {
@@ -339,12 +382,17 @@ export namespace Bits {
     return uint8;
   }
 
+  /**
+   * Converts a uint8 number (0-255) to a tuple of 8 booleans.
+   * @param uint8 A number between 0-255
+   * @returns A tuple of 8 booleans.
+   */
   export function from(uint8: number): Type {
     if (uint8 < 0 || uint8 > 255) {
       throw new Error("Input must be a uint8 number (0-255)");
     }
 
-    let bits = [];
+    const bits = [];
     for (let i = 7; i >= 0; i--) {
       bits.push(!!(uint8 & (1 << i)));
     }

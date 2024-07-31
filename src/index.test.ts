@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { t, encode, decode, type Infer, Bits } from ".";
+import { Bits, type Infer, decode, encode, t } from ".";
 
 test("i8", () => {
   const schema = t.i8();
