@@ -44,11 +44,11 @@ class i8<const Label extends string> extends Schema<"Int8", number> {
     return dataview.getInt8(offset);
   }
 
-  bytes() {
+  bytes(): number {
     return Int8Array.BYTES_PER_ELEMENT;
   }
 
-  static t<L extends string = string>(label?: L) {
+  static t<L extends string = string>(label?: L): i8<L> {
     return new i8<L>();
   }
 }
@@ -62,11 +62,11 @@ class u8<const Label extends string> extends Schema<"UInt8", number> {
     return dataview.getUint8(offset);
   }
 
-  bytes() {
+  bytes(): number {
     return Uint8Array.BYTES_PER_ELEMENT;
   }
 
-  static t<L extends string = string>(label?: L) {
+  static t<L extends string = string>(label?: L): u8<L> {
     return new u8<L>();
   }
 }
@@ -80,11 +80,11 @@ class i16<const Label extends string> extends Schema<"Int16", number> {
     return dataview.getInt16(offset);
   }
 
-  bytes() {
+  bytes(): number {
     return Int16Array.BYTES_PER_ELEMENT;
   }
 
-  static t<L extends string = string>(label?: L) {
+  static t<L extends string = string>(label?: L): i16<L> {
     return new i16<L>();
   }
 }
@@ -98,11 +98,11 @@ class u16<const Label extends string> extends Schema<"UInt16", number> {
     return dataview.getUint16(offset);
   }
 
-  bytes() {
+  bytes(): number {
     return Uint16Array.BYTES_PER_ELEMENT;
   }
 
-  static t<L extends string = string>(label?: L) {
+  static t<L extends string = string>(label?: L): u16<L> {
     return new u16<L>();
   }
 }
@@ -116,11 +116,11 @@ class i32<const Label extends string> extends Schema<"Int32", number> {
     return dataview.getInt32(offset);
   }
 
-  bytes() {
+  bytes(): number {
     return Int32Array.BYTES_PER_ELEMENT;
   }
 
-  static t<L extends string = string>(label?: L) {
+  static t<L extends string = string>(label?: L): i32<L> {
     return new i32<L>();
   }
 }
@@ -134,11 +134,11 @@ class u32<const Label extends string> extends Schema<"UInt32", number> {
     return dataview.getUint32(offset);
   }
 
-  bytes() {
+  bytes(): number {
     return Uint32Array.BYTES_PER_ELEMENT;
   }
 
-  static t<L extends string = string>(label?: L) {
+  static t<L extends string = string>(label?: L): u32<L> {
     return new u32<L>();
   }
 }
@@ -152,11 +152,11 @@ class i64<const Label extends string> extends Schema<"Int64", bigint> {
     return dataview.getBigInt64(offset, true);
   }
 
-  bytes() {
+  bytes(): number {
     return BigInt64Array.BYTES_PER_ELEMENT;
   }
 
-  static t<L extends string = string>(label?: L) {
+  static t<L extends string = string>(label?: L): i64<L> {
     return new i64<L>();
   }
 }
@@ -170,11 +170,11 @@ class u64<const Label extends string> extends Schema<"UInt64", bigint> {
     return dataview.getBigUint64(offset, true);
   }
 
-  bytes() {
+  bytes(): number {
     return BigInt64Array.BYTES_PER_ELEMENT;
   }
 
-  static t<L extends string = string>(label?: L) {
+  static t<L extends string = string>(label?: L): u64<L> {
     return new u64<L>();
   }
 }
@@ -188,11 +188,11 @@ class f32<const Label extends string> extends Schema<"Float32", number> {
     return dataview.getFloat32(offset);
   }
 
-  bytes() {
+  bytes(): number {
     return Float32Array.BYTES_PER_ELEMENT;
   }
 
-  static t<L extends string = string>(label?: L) {
+  static t<L extends string = string>(label?: L): f32<L> {
     return new f32<L>();
   }
 }
@@ -206,11 +206,11 @@ class f64<const Label extends string> extends Schema<"Float64", number> {
     return dataview.getFloat64(offset, true);
   }
 
-  bytes() {
+  bytes(): number {
     return Float64Array.BYTES_PER_ELEMENT;
   }
 
-  static t<L extends string = string>(label?: L) {
+  static t<L extends string = string>(label?: L): f64<L> {
     return new f64<L>();
   }
 }
@@ -245,11 +245,11 @@ class tuple<const Label extends string, const T extends Schema[]> extends Schema
     return results;
   }
 
-  bytes(data: RemapTuple<T>) {
+  bytes(data: RemapTuple<T>): number {
     return this.elements.reduce((acc, element, index) => acc + element.bytes(data[index]), 0);
   }
 
-  static t<L extends string, const T extends Schema[]>(label: L, children: T) {
+  static t<L extends string, const T extends Schema[]>(label: L, children: T): tuple<L, T> {
     return new tuple<L, T>(children);
   }
 }
@@ -286,11 +286,11 @@ class array<const Label extends string, const T extends Schema> extends Schema<"
     return results;
   }
 
-  bytes(data: T["t"][]) {
+  bytes(data: T["t"][]): number {
     return this.#kind.bytes(data) * data.length + 4; // 4 to hold the count of items in the array
   }
 
-  static t<L extends string, const T extends Schema>(label: L, kind: T) {
+  static t<L extends string, const T extends Schema>(label: L, kind: T): array<L, T> {
     return new array<L, T>(kind);
   }
 }
