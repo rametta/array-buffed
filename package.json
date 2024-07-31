@@ -2,10 +2,19 @@
   "name": "@rametta/array-buffed",
   "module": "index.ts",
   "type": "module",
+  "author": {
+    "name": "Jason Rametta",
+    "url": "https://rametta.org"
+  },
   "scripts": {
-    "publish": "bunx jsr publish"
+    "publish": "bunx jsr publish",
+    "biome:check": "biome check ./src",
+    "biome:write": "biome check ./src --write"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.8.3"
   }
 }
