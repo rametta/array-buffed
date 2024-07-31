@@ -2,6 +2,9 @@
   "name": "@rametta/array-buffed",
   "module": "index.ts",
   "type": "module",
+  "scripts": {
+    "publish": "bunx jsr publish"
+  },
   "peerDependencies": {
     "typescript": "^5.0.0"
   }
