@@ -1,0 +1,8 @@
+{
+  "name": "@rametta/array-buffed",
+  "module": "index.ts",
+  "type": "module",
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
