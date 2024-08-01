@@ -11,7 +11,7 @@
     "biome:write": "biome check ./src --write"
   },
   "peerDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.5.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.3"

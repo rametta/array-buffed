@@ -162,6 +162,38 @@ test("f64", () => {
   expect(out).toEqual(value);
 });
 
+test("str - dynamic", () => {
+  const schema = t.str();
+  const value = "hello";
+  const bytes = schema.bytes(value);
+  expect(bytes).toBe(9);
+
+  const buffer = encode(schema, value);
+  expect(buffer.byteLength).toBe(bytes);
+
+  const out = decode(schema, buffer);
+  expect(out).toEqual(value);
+});
+
+test("str - fixed", () => {
+  const schema = t.str("My String", 5);
+  const value = "hello";
+  const bytes = schema.bytes(value);
+  expect(bytes).toBe(5);
+
+  const buffer = encode(schema, value);
+  expect(buffer.byteLength).toBe(bytes);
+
+  const out = decode(schema, buffer);
+  expect(out).toEqual(value);
+});
+
+test("str - fixed with incorrect length", () => {
+  const schema = t.str("My String", 5);
+  const value = "this is bigger than 5 bytes";
+  expect(() => encode(schema, value)).toThrowError();
+});
+
 test("tuple - only primitives", () => {
   const schema = t.tuple("Some Tuple", [t.i8(), t.u8(), t.i16(), t.u16(), t.i32(), t.u32(), t.i64(), t.u64()]);
   const values: Infer<typeof schema> = [-5, 9, -8, 10, -800, 1000, -100_000n, 100_000n];
@@ -500,6 +532,10 @@ test("bytes", () => {
   expect(t.i64().bytes()).toBe(8);
   expect(t.f32().bytes()).toBe(4);
   expect(t.f64().bytes()).toBe(8);
+
+  expect(t.str().bytes("")).toBe(4);
+  expect(t.str().bytes("h")).toBe(5);
+  expect(t.str().bytes("hello")).toBe(9);
 
   expect(t.tuple("", []).bytes([])).toBe(0);
   expect(t.tuple("", [t.u8()]).bytes([1])).toBe(1);

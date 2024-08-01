@@ -26,7 +26,7 @@ export abstract class Schema<const Name extends string = string, const T = any> 
   readonly t: T = undefined as T;
   abstract encode(dataview: DataView, offset: number, value: T): void;
   abstract decode(dataview: DataView, offset: number): T;
-  abstract bytes(data: T[]): number;
+  abstract bytes(data: T): number;
 }
 
 class Int8<const Label extends string> extends Schema<"Int8", number> {
@@ -289,6 +289,59 @@ class List<const Label extends string, const T extends Schema> extends Schema<"L
   }
 }
 
+class Str<const Label extends string> extends Schema<"String", string> {
+  static encoder = new TextEncoder();
+  static decoder = new TextDecoder();
+  readonly name = "String";
+  readonly fixedLength?: number;
+
+  constructor(fixedLength?: number) {
+    super();
+    this.fixedLength = fixedLength;
+  }
+
+  encode(dataview: DataView, offset: number, str: string): void {
+    const encoded = Str.encoder.encode(str);
+
+    if (this.fixedLength == null) {
+      dataview.setUint32(offset, encoded.byteLength);
+    } else {
+      if (encoded.byteLength !== this.fixedLength) {
+        throw new Error(
+          `Failed to encode Str. Str has a fixed length ${this.fixedLength}. Tried to encode string of different size ${encoded.byteLength}. String: ${str} `,
+        );
+      }
+    }
+
+    let localOffset = this.fixedLength == null ? Uint32Array.BYTES_PER_ELEMENT : 0;
+    for (const value of encoded) {
+      dataview.setUint8(offset + localOffset, value);
+      localOffset++;
+    }
+  }
+
+  decode(dataview: DataView, offset: number): string {
+    const length = this.fixedLength ?? dataview.getUint32(offset);
+    const results = new Uint8Array(length);
+
+    let localOffset = this.fixedLength == null ? Uint32Array.BYTES_PER_ELEMENT : 0;
+    for (let i = 0; i < length; i++) {
+      results[i] = dataview.getUint8(offset + localOffset);
+      localOffset++;
+    }
+
+    return Str.decoder.decode(results);
+  }
+
+  bytes(data: string): number {
+    return this.fixedLength ?? Str.encoder.encode(data).byteLength + 4; // 4 to hold the string length
+  }
+
+  static t<L extends string>(label?: L, fixedLength?: number): Str<L> {
+    return new Str<L>(fixedLength);
+  }
+}
+
 /**
  * Schema types that can be used for constructing a schema shape.
  */
@@ -297,7 +350,7 @@ export namespace t {
    * Int8 from `-128` to `127`
    *
    * 1 byte / 8-bit
-   * 
+   *
    * @param label Optional label describing the data held in this number.
    * @returns A Int8 schema
    * @example const schema = t.i8()
@@ -307,7 +360,7 @@ export namespace t {
    * UInt8 from `0` to `255`
    *
    * 1 byte / 8-bit
-   * 
+   *
    * @param label Optional label describing the data held in this number.
    * @returns A UInt8 schema
    * @example const schema = t.u8()
@@ -317,7 +370,7 @@ export namespace t {
    * Int16 from `-32,768` to `32,767`
    *
    * 2 bytes / 16-bit
-   * 
+   *
    * @param label Optional label describing the data held in this number.
    * @returns A Int16 schema
    * @example const schema = t.i16()
@@ -327,7 +380,7 @@ export namespace t {
    * UInt16 from `0` to `65,535`
    *
    * 2 bytes / 16-bit
-   * 
+   *
    * @param label Optional label describing the data held in this number.
    * @returns A UInt16 schema
    * @example const schema = t.u16()
@@ -337,7 +390,7 @@ export namespace t {
    * Int32 from `-2,147,483,648` to `2,147,483,647`
    *
    * 4 bytes / 32-bit
-   * 
+   *
    * @param label Optional label describing the data held in this number.
    * @returns A Int32 schema
    * @example const schema = t.i32()
@@ -415,10 +468,20 @@ export namespace t {
    * @example const schema = t.array("My List", t.u8())
    */
   export const array: <L extends string, const T extends Schema>(label: L, kind: T) => List<L, T> = List.t;
+  /**
+   * String - a dynamic or fixed length string. Fixed length if a `fixedLength` option is provided, otherwise dynamic.
+   *
+   * Bytes depends on the size of the string at encode time or `fixedLength` if provided. Uses TextEncoder.
+   *
+   * @param label Optional label describing the string
+   * @param fixedLength If you knoew the string being encoded is always the same size, save space by providing a fixedLength, this will avoid 4 extra bytes being encoded for the length.
+   * @returns A String schema
+   * @example const schema = t.str()
+   */
+  export const str: <L extends string>(label?: L, fixedLength?: number) => Str<L> = Str.t;
 
   // union: union.t // TODO
   // enum: enum.t // TODO
-  // string: string.t // TODO
 }
 
 /**
