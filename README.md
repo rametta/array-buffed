@@ -1,5 +1,8 @@
 # 🧬 @rametta/array-buffed
 
+[![JSR](https://jsr.io/badges/@rametta/array-buffed)](https://jsr.io/@rametta/array-buffed)
+[![JSR Score](https://jsr.io/badges/@rametta/array-buffed/score)](https://jsr.io/@rametta/array-buffed)
+
 > Strongly typed schemas for binary data encoding and decoding.
 
 Do you work with [ArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer)?
