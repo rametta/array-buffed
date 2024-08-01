@@ -290,8 +290,8 @@ class List<const Label extends string, const T extends Schema> extends Schema<"L
 }
 
 class Str<const Label extends string> extends Schema<"String", string> {
-  static encoder = new TextEncoder();
-  static decoder = new TextDecoder();
+  static encoder: TextEncoder = new TextEncoder();
+  static decoder: TextDecoder = new TextDecoder();
   readonly name = "String";
   readonly fixedLength?: number;
 
@@ -471,7 +471,7 @@ export namespace t {
   /**
    * String - a dynamic or fixed length string. Fixed length if a `fixedLength` option is provided, otherwise dynamic.
    *
-   * Bytes depends on the size of the string at encode time or `fixedLength` if provided. Uses TextEncoder.
+   * Bytes depends on the size of the string at encode time or `fixedLength` if provided. Uses `TextEncoder`.
    *
    * @param label Optional label describing the string
    * @param fixedLength If you knoew the string being encoded is always the same size, save space by providing a fixedLength, this will avoid 4 extra bytes being encoded for the length.
