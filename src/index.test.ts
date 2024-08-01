@@ -138,7 +138,7 @@ test("f32", () => {
   expect(buffer.byteLength).toBe(4);
 
   const expected = new DataView(new ArrayBuffer(schema.bytes()));
-  expected.setFloat32(0, value);
+  expected.setFloat32(0, value, true);
 
   const out = decode(schema, buffer);
   expect(buffer).toStrictEqual(expected.buffer);
@@ -421,16 +421,16 @@ test("array - f32", () => {
 
   const view = new DataView(buffer);
   expect(view.getUint32(0)).toBe(values.length);
-  expect(view.getFloat32(4)).toBe(values[0]);
-  expect(view.getFloat32(8)).toBe(values[1]);
-  expect(view.getFloat32(12)).toBe(values[2]);
-  expect(view.getFloat32(16)).toBe(values[3]);
-  expect(view.getFloat32(20)).toBe(values[4]);
-  expect(view.getFloat32(24)).toBe(values[5]);
-  expect(view.getFloat32(28)).toBe(values[6]);
-  expect(view.getFloat32(32)).toBe(values[7]);
-  expect(view.getFloat32(36)).toBe(values[8]);
-  expect(view.getFloat32(40)).toBe(values[9]);
+  expect(view.getFloat32(4, true)).toBe(values[0]);
+  expect(view.getFloat32(8, true)).toBe(values[1]);
+  expect(view.getFloat32(12, true)).toBe(values[2]);
+  expect(view.getFloat32(16, true)).toBe(values[3]);
+  expect(view.getFloat32(20, true)).toBe(values[4]);
+  expect(view.getFloat32(24, true)).toBe(values[5]);
+  expect(view.getFloat32(28, true)).toBe(values[6]);
+  expect(view.getFloat32(32, true)).toBe(values[7]);
+  expect(view.getFloat32(36, true)).toBe(values[8]);
+  expect(view.getFloat32(40, true)).toBe(values[9]);
 });
 
 test("array - f64", () => {
@@ -546,4 +546,114 @@ test("bytes", () => {
   expect(t.array("", t.u8()).bytes([1])).toBe(5);
   expect(t.array("", t.u16()).bytes([1, 1])).toBe(8);
   expect(t.array("", t.tuple("", [t.u8(), t.u8()])).bytes([[1, 1]])).toBe(4 + 1 + 1);
+
+  const union = t.union("", [t.u8(), t.u64(), t.str()]);
+  expect(union.bytes([0, 0])).toBe(1 + 1);
+  expect(union.bytes([1, 0])).toBe(1 + 8);
+  expect(union.bytes([2, "hello"])).toBe(1 + 4 + 5);
+});
+
+test("union", () => {
+  const schema = t.union("My Union", [t.u8(), t.u64()]);
+  const data: Infer<typeof schema> = [0, 0]; // first item in union u8
+
+  const bytes = schema.bytes(data);
+  expect(bytes).toBe(2);
+  const buffer = encode(schema, data);
+  expect(buffer.byteLength).toBe(bytes);
+
+  const view = new DataView(buffer);
+  expect(view.getUint8(0)).toBe(data[0]);
+  expect(view.getUint8(1)).toBe(data[1] as number);
+
+  const decoded = decode(schema, buffer);
+  expect(decoded).toStrictEqual(data);
+
+  const data2: Infer<typeof schema> = [1, 0n]; // second item in union u64
+  const bytes2 = schema.bytes(data2);
+  expect(bytes2).toBe(9);
+  const buffer2 = encode(schema, data2);
+  expect(buffer2.byteLength).toBe(bytes2);
+
+  const view2 = new DataView(buffer2);
+  expect(view2.getUint8(0)).toBe(data2[0]);
+  expect(view2.getBigUint64(1)).toBe(data2[1] as bigint);
+
+  const decoded2 = decode(schema, buffer2);
+  expect(decoded2).toStrictEqual(data2);
+});
+
+test("union - nested", () => {
+  const schema = t.union("", [t.tuple("", [t.f32(), t.str()]), t.union("", [t.f64(), t.str("", 3)])]);
+  const data: Infer<typeof schema> = [0, [5.5, "hello"]]; // first item in union - tuple of f32,str
+
+  const bytes = schema.bytes(data);
+  expect(bytes).toBe(14);
+  const buffer = encode(schema, data);
+  expect(buffer.byteLength).toBe(bytes);
+
+  const view = new DataView(buffer);
+  expect(view.getUint8(0)).toBe(data[0]);
+  expect(view.getFloat32(1, true)).toBe(data[1][0]);
+  expect(view.getUint32(5)).toBe(5); // "hello" length
+
+  const decoded = decode(schema, buffer);
+  expect(decoded).toStrictEqual(data);
+});
+
+test("union - nested 2", () => {
+  const schema = t.union("", [t.tuple("", [t.f32(), t.str()]), t.union("", [t.f64(), t.str("", 3)])]);
+  const data: Infer<typeof schema> = [1, [0, 0.5]]; // second item in union - union of f64 | str3
+
+  const bytes = schema.bytes(data);
+  expect(bytes).toBe(1 + 1 + 8);
+  const buffer = encode(schema, data);
+  expect(buffer.byteLength).toBe(bytes);
+
+  const view = new DataView(buffer);
+  expect(view.getUint8(0)).toBe(data[0]);
+  expect(view.getUint8(1)).toBe(data[1][0]);
+  expect(view.getFloat64(2, true)).toBe(0.5);
+
+  const decoded = decode(schema, buffer);
+  expect(decoded).toStrictEqual(data);
+});
+
+test("union - nested 2.1", () => {
+  const schema = t.union("", [t.tuple("", [t.f32(), t.str()]), t.union("", [t.f64(), t.str("", 3)])]);
+  const data: Infer<typeof schema> = [1, [1, "abc"]];
+
+  const bytes = schema.bytes(data);
+  expect(bytes).toBe(1 + 1 + 3);
+  const buffer = encode(schema, data);
+  expect(buffer.byteLength).toBe(bytes);
+
+  const view = new DataView(buffer);
+  expect(view.getUint8(0)).toBe(data[0]);
+  expect(view.getUint8(1)).toBe(data[1][0]);
+
+  const decoded = decode(schema, buffer);
+  expect(decoded).toStrictEqual(data);
+});
+
+test("u8 - as enum value", () => {
+  enum Color {
+    R = 0,
+    G = 1,
+    B = 2,
+  }
+
+  const schema = t.u8("Color");
+  expect(schema.bytes()).toBe(1);
+
+  const value = Color.B;
+  const buffer = encode(schema, value);
+  expect(buffer.byteLength).toBe(1);
+
+  const expected = new DataView(new ArrayBuffer(schema.bytes()));
+  expected.setUint8(0, value);
+
+  const out = decode(schema, buffer);
+  expect(buffer).toStrictEqual(expected.buffer);
+  expect(out).toEqual(value);
 });

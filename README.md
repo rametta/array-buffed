@@ -120,5 +120,6 @@ const data: Schema = [101, 3.5, [-4, 7, 9, 100, 74]] // type check compiles - wo
 - String - [`t.str()`](https://jsr.io/@rametta/array-buffed/doc/~/t.str)
 - Tuple - [`t.tuple()`](https://jsr.io/@rametta/array-buffed/doc/~/t.tuple)
 - Array - [`t.array()`](https://jsr.io/@rametta/array-buffed/doc/~/t.array)
+- Union - [`t.union()`](https://jsr.io/@rametta/array-buffed/doc/~/t.union)
 
 [Full docs on JSR](https://jsr.io/@rametta/array-buffed/doc)

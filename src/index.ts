@@ -16,6 +16,12 @@ type RemapTuple<T extends unknown[]> = {
   [K in keyof T]: ExtractT<T[K]>;
 };
 
+type ToUnion<T extends unknown[]> = Prettify<[number, ExtractT<T[number]>]>;
+
+type Prettify<T> = {
+  [K in keyof T]: T[K];
+} & {};
+
 /**
  * The base Schema class for which to extend when creating new Schema subtypes, such as uint8, f32, etc...
  */
@@ -24,18 +30,18 @@ export abstract class Schema<const Name extends string = string, const T = any> 
   readonly name: Name = "" as Name;
   readonly label: string = "";
   readonly t: T = undefined as T;
-  abstract encode(dataview: DataView, offset: number, value: T): void;
-  abstract decode(dataview: DataView, offset: number): T;
+  abstract encode(view: DataView, offset: number, value: T): void;
+  abstract decode(view: DataView, offset: number): T;
   abstract bytes(data: T): number;
 }
 
 class Int8<const Label extends string> extends Schema<"Int8", number> {
-  encode(dataview: DataView, offset: number, value: number): void {
-    dataview.setInt8(offset, value);
+  encode(view: DataView, offset: number, value: number): void {
+    view.setInt8(offset, value);
   }
 
-  decode(dataview: DataView, offset: number): number {
-    return dataview.getInt8(offset);
+  decode(view: DataView, offset: number): number {
+    return view.getInt8(offset);
   }
 
   bytes(): number {
@@ -48,12 +54,12 @@ class Int8<const Label extends string> extends Schema<"Int8", number> {
 }
 
 class UInt8<const Label extends string> extends Schema<"UInt8", number> {
-  encode(dataview: DataView, offset: number, value: number): void {
-    dataview.setUint8(offset, value);
+  encode(view: DataView, offset: number, value: number): void {
+    view.setUint8(offset, value);
   }
 
-  decode(dataview: DataView, offset: number): number {
-    return dataview.getUint8(offset);
+  decode(view: DataView, offset: number): number {
+    return view.getUint8(offset);
   }
 
   bytes(): number {
@@ -66,12 +72,12 @@ class UInt8<const Label extends string> extends Schema<"UInt8", number> {
 }
 
 class Int16<const Label extends string> extends Schema<"Int16", number> {
-  encode(dataview: DataView, offset: number, value: number): void {
-    dataview.setInt16(offset, value);
+  encode(view: DataView, offset: number, value: number): void {
+    view.setInt16(offset, value);
   }
 
-  decode(dataview: DataView, offset: number): number {
-    return dataview.getInt16(offset);
+  decode(view: DataView, offset: number): number {
+    return view.getInt16(offset);
   }
 
   bytes(): number {
@@ -84,12 +90,12 @@ class Int16<const Label extends string> extends Schema<"Int16", number> {
 }
 
 class UInt16<const Label extends string> extends Schema<"UInt16", number> {
-  encode(dataview: DataView, offset: number, value: number): void {
-    dataview.setUint16(offset, value);
+  encode(view: DataView, offset: number, value: number): void {
+    view.setUint16(offset, value);
   }
 
-  decode(dataview: DataView, offset: number): number {
-    return dataview.getUint16(offset);
+  decode(view: DataView, offset: number): number {
+    return view.getUint16(offset);
   }
 
   bytes(): number {
@@ -102,12 +108,12 @@ class UInt16<const Label extends string> extends Schema<"UInt16", number> {
 }
 
 class Int32<const Label extends string> extends Schema<"Int32", number> {
-  encode(dataview: DataView, offset: number, value: number): void {
-    dataview.setInt32(offset, value);
+  encode(view: DataView, offset: number, value: number): void {
+    view.setInt32(offset, value);
   }
 
-  decode(dataview: DataView, offset: number): number {
-    return dataview.getInt32(offset);
+  decode(view: DataView, offset: number): number {
+    return view.getInt32(offset);
   }
 
   bytes(): number {
@@ -120,12 +126,12 @@ class Int32<const Label extends string> extends Schema<"Int32", number> {
 }
 
 class UInt32<const Label extends string> extends Schema<"UInt32", number> {
-  encode(dataview: DataView, offset: number, value: number): void {
-    dataview.setUint32(offset, value);
+  encode(view: DataView, offset: number, value: number): void {
+    view.setUint32(offset, value);
   }
 
-  decode(dataview: DataView, offset: number): number {
-    return dataview.getUint32(offset);
+  decode(view: DataView, offset: number): number {
+    return view.getUint32(offset);
   }
 
   bytes(): number {
@@ -138,12 +144,12 @@ class UInt32<const Label extends string> extends Schema<"UInt32", number> {
 }
 
 class Int64<const Label extends string> extends Schema<"Int64", bigint> {
-  encode(dataview: DataView, offset: number, value: bigint): void {
-    dataview.setBigInt64(offset, value, true);
+  encode(view: DataView, offset: number, value: bigint): void {
+    view.setBigInt64(offset, value, true);
   }
 
-  decode(dataview: DataView, offset: number): bigint {
-    return dataview.getBigInt64(offset, true);
+  decode(view: DataView, offset: number): bigint {
+    return view.getBigInt64(offset, true);
   }
 
   bytes(): number {
@@ -156,12 +162,12 @@ class Int64<const Label extends string> extends Schema<"Int64", bigint> {
 }
 
 class UInt64<const Label extends string> extends Schema<"UInt64", bigint> {
-  encode(dataview: DataView, offset: number, value: bigint): void {
-    dataview.setBigUint64(offset, value, true);
+  encode(view: DataView, offset: number, value: bigint): void {
+    view.setBigUint64(offset, value, true);
   }
 
-  decode(dataview: DataView, offset: number): bigint {
-    return dataview.getBigUint64(offset, true);
+  decode(view: DataView, offset: number): bigint {
+    return view.getBigUint64(offset, true);
   }
 
   bytes(): number {
@@ -174,12 +180,12 @@ class UInt64<const Label extends string> extends Schema<"UInt64", bigint> {
 }
 
 class Float32<const Label extends string> extends Schema<"Float32", number> {
-  encode(dataview: DataView, offset: number, value: number): void {
-    dataview.setFloat32(offset, value);
+  encode(view: DataView, offset: number, value: number): void {
+    view.setFloat32(offset, value, true);
   }
 
-  decode(dataview: DataView, offset: number): number {
-    return dataview.getFloat32(offset);
+  decode(view: DataView, offset: number): number {
+    return view.getFloat32(offset, true);
   }
 
   bytes(): number {
@@ -192,12 +198,12 @@ class Float32<const Label extends string> extends Schema<"Float32", number> {
 }
 
 class Float64<const Label extends string> extends Schema<"Float64", number> {
-  encode(dataview: DataView, offset: number, value: number): void {
-    dataview.setFloat64(offset, value, true);
+  encode(view: DataView, offset: number, value: number): void {
+    view.setFloat64(offset, value, true);
   }
 
-  decode(dataview: DataView, offset: number): number {
-    return dataview.getFloat64(offset, true);
+  decode(view: DataView, offset: number): number {
+    return view.getFloat64(offset, true);
   }
 
   bytes(): number {
@@ -218,20 +224,20 @@ class Tuple<const Label extends string, const T extends Schema[]> extends Schema
     this.elements = children;
   }
 
-  encode(dataview: DataView, offset: number, value: RemapTuple<T>): void {
+  encode(view: DataView, offset: number, value: RemapTuple<T>): void {
     let localOffset = 0;
     for (let i = 0; i < this.elements.length; i++) {
-      this.elements[i].encode(dataview, offset + localOffset, value[i]);
+      this.elements[i].encode(view, offset + localOffset, value[i]);
       localOffset += this.elements[i].bytes(value[i]);
     }
   }
 
-  decode(dataview: DataView, offset: number): RemapTuple<T> {
+  decode(view: DataView, offset: number): RemapTuple<T> {
     const results: RemapTuple<T> = [] as RemapTuple<T>;
 
     let localOffset = 0;
     for (const element of this.elements) {
-      const data = element.decode(dataview, offset + localOffset);
+      const data = element.decode(view, offset + localOffset);
       results.push(data);
       localOffset += element.bytes(data);
     }
@@ -257,22 +263,22 @@ class List<const Label extends string, const T extends Schema> extends Schema<"L
     this.#kind = kind;
   }
 
-  encode(dataview: DataView, offset: number, values: T["t"][]): void {
-    dataview.setUint32(offset, values.length);
+  encode(view: DataView, offset: number, values: T["t"][]): void {
+    view.setUint32(offset, values.length);
     let localOffset = Uint32Array.BYTES_PER_ELEMENT;
     for (const value of values) {
-      this.#kind.encode(dataview, offset + localOffset, value);
+      this.#kind.encode(view, offset + localOffset, value);
       localOffset += this.#kind.bytes(value);
     }
   }
 
-  decode(dataview: DataView, offset: number): T["t"][] {
+  decode(view: DataView, offset: number): T["t"][] {
     const results: T["t"][] = [];
 
-    const count = dataview.getUint32(offset);
+    const count = view.getUint32(offset);
     let localOffset = Uint32Array.BYTES_PER_ELEMENT;
     for (let i = 0; i < count; i++) {
-      const data = this.#kind.decode(dataview, offset + localOffset);
+      const data = this.#kind.decode(view, offset + localOffset);
       results.push(data);
       localOffset += this.#kind.bytes(data);
     }
@@ -281,7 +287,7 @@ class List<const Label extends string, const T extends Schema> extends Schema<"L
   }
 
   bytes(data: T["t"][]): number {
-    return this.#kind.bytes(data) * data.length + 4; // 4 to hold the count of items in the array
+    return this.#kind.bytes(data) * data.length + Uint32Array.BYTES_PER_ELEMENT; // Uint32Array.BYTES_PER_ELEMENT (4) to hold the count of items in the array
   }
 
   static t<L extends string, const T extends Schema>(label: L, kind: T): List<L, T> {
@@ -300,11 +306,11 @@ class Str<const Label extends string> extends Schema<"String", string> {
     this.fixedLength = fixedLength;
   }
 
-  encode(dataview: DataView, offset: number, str: string): void {
+  encode(view: DataView, offset: number, str: string): void {
     const encoded = Str.encoder.encode(str);
 
     if (this.fixedLength == null) {
-      dataview.setUint32(offset, encoded.byteLength);
+      view.setUint32(offset, encoded.byteLength);
     } else {
       if (encoded.byteLength !== this.fixedLength) {
         throw new Error(
@@ -315,18 +321,18 @@ class Str<const Label extends string> extends Schema<"String", string> {
 
     let localOffset = this.fixedLength == null ? Uint32Array.BYTES_PER_ELEMENT : 0;
     for (const value of encoded) {
-      dataview.setUint8(offset + localOffset, value);
+      view.setUint8(offset + localOffset, value);
       localOffset++;
     }
   }
 
-  decode(dataview: DataView, offset: number): string {
-    const length = this.fixedLength ?? dataview.getUint32(offset);
+  decode(view: DataView, offset: number): string {
+    const length = this.fixedLength ?? view.getUint32(offset);
     const results = new Uint8Array(length);
 
     let localOffset = this.fixedLength == null ? Uint32Array.BYTES_PER_ELEMENT : 0;
     for (let i = 0; i < length; i++) {
-      results[i] = dataview.getUint8(offset + localOffset);
+      results[i] = view.getUint8(offset + localOffset);
       localOffset++;
     }
 
@@ -334,11 +340,44 @@ class Str<const Label extends string> extends Schema<"String", string> {
   }
 
   bytes(data: string): number {
-    return this.fixedLength ?? Str.encoder.encode(data).byteLength + 4; // 4 to hold the string length
+    return this.fixedLength ?? Str.encoder.encode(data).byteLength + Uint32Array.BYTES_PER_ELEMENT; // Uint32Array.BYTES_PER_ELEMENT (4) to hold the string length
   }
 
   static t<L extends string>(label?: L, fixedLength?: number): Str<L> {
     return new Str<L>(fixedLength);
+  }
+}
+
+class Union<const Label extends string, const T extends Schema[]> extends Schema<"Union", ToUnion<T>> {
+  readonly name = "Union";
+  readonly #schemas: T;
+
+  constructor(schemas: T) {
+    super();
+    this.#schemas = schemas;
+  }
+
+  encode(view: DataView, offset: number, data: ToUnion<T>): void {
+    view.setUint8(offset, data[0]); // union index
+    const localOffset = Uint8Array.BYTES_PER_ELEMENT;
+    const schema = this.#schemas[data[0]];
+    schema.encode(view, offset + localOffset, data[1]);
+  }
+
+  decode(view: DataView, offset: number): ToUnion<T> {
+    const unionIndex = view.getUint8(offset);
+    const schema = this.#schemas[unionIndex];
+    const localOffset = Uint8Array.BYTES_PER_ELEMENT;
+    return [unionIndex, schema.decode(view, offset + localOffset)];
+  }
+
+  bytes(data: ToUnion<T>): number {
+    const schema = this.#schemas[data[0]];
+    return schema.bytes(data[1]) + Uint8Array.BYTES_PER_ELEMENT;
+  }
+
+  static t<L extends string, const T extends Schema[]>(label: L, schemas: T): Union<L, T> {
+    return new Union<L, T>(schemas);
   }
 }
 
@@ -474,14 +513,28 @@ export namespace t {
    * Bytes depends on the size of the string at encode time or `fixedLength` if provided. Uses `TextEncoder`.
    *
    * @param label Optional label describing the string
-   * @param fixedLength If you knoew the string being encoded is always the same size, save space by providing a fixedLength, this will avoid 4 extra bytes being encoded for the length.
+   * @param fixedLength If you know the string being encoded is always the same size, save space by providing a fixedLength, this will avoid 4 extra bytes being encoded for the length.
    * @returns A String schema
    * @example const schema = t.str()
    */
   export const str: <L extends string>(label?: L, fixedLength?: number) => Str<L> = Str.t;
 
-  // union: union.t // TODO
-  // enum: enum.t // TODO
+  /**
+   * Union - a choice between different schemas. The union index must be provided in the data as it is encoded into the data for 1 byte.
+   *
+   * @param label Required label describing the union
+   * @param schemas An array of schemas that can possibly take this place in the array buffer
+   * @returns A Union schema
+   * @example
+   * const schema = t.union("My Union", [t.u8(), t.i64()])
+   * // This schema can encode either a u8 or a i64
+   * const data: Infer<typeof schema> = [0, 255] // first item in the union, 0 is the index of the union choices, so u8 gere
+   * // or
+   * const data2: Infer<typeof schema> = [1, -90_000] // second item in the union, 1 is the index of the union choices, so i64 here
+   *
+   * encode(schema, data) // or data2
+   */
+  export const union: <L extends string, const T extends Schema[]>(label: L, schemas: T) => Union<L, T> = Union.t;
 }
 
 /**
