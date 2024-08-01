@@ -7,7 +7,6 @@
     "url": "https://rametta.org"
   },
   "scripts": {
-    "publish": "bunx jsr publish",
     "biome:check": "biome check ./src",
     "biome:write": "biome check ./src --write"
   },

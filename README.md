@@ -64,6 +64,23 @@ const [x,y] = decode(MouseSchema, buffer)
 
 Creating schemas is roughly based on how the data is stored in binary, so we do not use any object types with keys and values - every schema is created by defining tuples, arrays, and primitives like `u8`, `i16`, `f32`, etc.
 
+```ts
+import { t } from '@rametta/array-buffed'
+
+// labels are optional for primitives, but useful for describing your data
+const MySchema = t.tuple("World", [
+  // tuples are fixed length arrays
+  t.tuple("world", [t.i32("x"), t.i32("y")]),
+  t.tuple("color", [t.u8("r"), t.u8("g"), t.u8("b")])
+  // arrays have dynamic lengths and can only be one type, although that type can also be a tuple type
+  t.array("heights", t.u16())
+  // various primitives
+  t.u16("width"),
+  t.u16("height"),
+  t.u8("depth")
+])
+```
+
 ## Inferring Types from Schemas
 
 Use the `Infer` helper type for extracting the Typescript type for any defined schema.
@@ -79,4 +96,10 @@ const MySchema = t.tuple("My Tuple", [
 
 type MySchema = Infer<typeof MySchema>
 //   MySchema = [number, number, Array<number>]
+
+const data: MySchema = [101, 3.5, [-4, 7, 9, 100, 74]] // type check compiles - woohoo
 ```
+
+## All Schemas
+
+For a list of all supported schema types, [click here](https://jsr.io/@rametta/array-buffed/doc/~/t)

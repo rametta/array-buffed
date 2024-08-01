@@ -1,13 +1,3 @@
-// 1 byte  - 8-bit  byte  -128 to 127
-// 2 bytes - 16-bit short -32,768 to 32,767
-// 4 bytes - 32-bit int   -2,147,483,648 to 2,147,483,647
-// 8 bytes - 64-bit long  -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807
-
-// 1 byte  - 8-bit  ubyte  0 to 255
-// 2 bytes - 16-bit ushort 0 to 65,535
-// 4 bytes - 32-bit uint   0 to 4,294,967,295
-// 8 bytes - 64-bit ulong  0 to 18,446,744,073,709,551,615
-
 // JS Typed Arrays: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Typed_arrays
 // JS DataView: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView
 
@@ -301,24 +291,83 @@ class array<const Label extends string, const T extends Schema> extends Schema<"
 
 /**
  * Schema types that can be used for constructing a schema shape.
- *
- * Hint: start with a tuple.
  */
 export const t = {
+  /**
+   * Int8 from `-128` to `127`
+   * 
+   * 1 byte / 8-bit
+   */
   i8: i8.t,
+  /**
+   * UInt8 from `0` to `255`
+   * 
+   * 1 byte / 8-bit
+   */
   u8: u8.t,
+  /**
+   * Int16 from `-32,768` to `32,767`
+   * 
+   * 2 bytes / 16-bit
+   */
   i16: i16.t,
+  /**
+   * UInt16 from `0` to `65,535`
+   * 
+   * 2 bytes / 16-bit
+   */
   u16: u16.t,
+  /**
+   * Int32 from `-2,147,483,648` to `2,147,483,647`
+   * 
+   * 4 bytes / 32-bit
+   */
   i32: i32.t,
+  /**
+   * UInt32 from `0` to `4,294,967,295`
+   * 
+   * 4 bytes / 32-bit
+   */
   u32: u32.t,
+  /**
+   * Int64 (aka BigInt) from `-9,223,372,036,854,775,808` to `9,223,372,036,854,775,807`
+   * 
+   * 8 bytes / 64-bit
+   */
   i64: i64.t,
+  /**
+   * UInt64 (aka BigUInt) from `0` to `18,446,744,073,709,551,615`
+   * 
+   * 8 bytes / 64-bit
+   */
   u64: u64.t,
+  /**
+   * Float32 - a 32-bit single-precision floating-point number
+   * 
+   * 4 bytes / 32-bit
+   */
   f32: f32.t,
+  /**
+   * Float64 - a 64-bit double-precision floating-point number
+   * 
+   * 8 bytes / 64-bit
+   */
   f64: f64.t,
+  /**
+   * Tuple - fixed length array of any number of other different schemas
+   * 
+   * Bytes depends on bytes of schemas included
+   */
   tuple: tuple.t,
+  /**
+   * Array - dynamic length array of only one other type of schema, which can include Tuples.
+   * 
+   * Bytes depends on amount of items in the array at encode time.
+   */
   array: array.t,
   // union: union.t // TODO
   // enum: enum.t // TODO
+  // string: string.t // TODO
 } as const;
 
 /**
