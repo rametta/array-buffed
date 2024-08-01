@@ -29,7 +29,7 @@ export abstract class Schema<const Name extends string = string, const T = any> 
   abstract bytes(data: T[]): number;
 }
 
-class i8<const Label extends string> extends Schema<"Int8", number> {
+class Int8<const Label extends string> extends Schema<"Int8", number> {
   encode(dataview: DataView, offset: number, value: number): void {
     dataview.setInt8(offset, value);
   }
@@ -42,12 +42,12 @@ class i8<const Label extends string> extends Schema<"Int8", number> {
     return Int8Array.BYTES_PER_ELEMENT;
   }
 
-  static t<L extends string = string>(label?: L): i8<L> {
-    return new i8<L>();
+  static t<L extends string = string>(label?: L): Int8<L> {
+    return new Int8<L>();
   }
 }
 
-class u8<const Label extends string> extends Schema<"UInt8", number> {
+class UInt8<const Label extends string> extends Schema<"UInt8", number> {
   encode(dataview: DataView, offset: number, value: number): void {
     dataview.setUint8(offset, value);
   }
@@ -60,12 +60,12 @@ class u8<const Label extends string> extends Schema<"UInt8", number> {
     return Uint8Array.BYTES_PER_ELEMENT;
   }
 
-  static t<L extends string = string>(label?: L): u8<L> {
-    return new u8<L>();
+  static t<L extends string = string>(label?: L): UInt8<L> {
+    return new UInt8<L>();
   }
 }
 
-class i16<const Label extends string> extends Schema<"Int16", number> {
+class Int16<const Label extends string> extends Schema<"Int16", number> {
   encode(dataview: DataView, offset: number, value: number): void {
     dataview.setInt16(offset, value);
   }
@@ -78,12 +78,12 @@ class i16<const Label extends string> extends Schema<"Int16", number> {
     return Int16Array.BYTES_PER_ELEMENT;
   }
 
-  static t<L extends string = string>(label?: L): i16<L> {
-    return new i16<L>();
+  static t<L extends string = string>(label?: L): Int16<L> {
+    return new Int16<L>();
   }
 }
 
-class u16<const Label extends string> extends Schema<"UInt16", number> {
+class UInt16<const Label extends string> extends Schema<"UInt16", number> {
   encode(dataview: DataView, offset: number, value: number): void {
     dataview.setUint16(offset, value);
   }
@@ -96,12 +96,12 @@ class u16<const Label extends string> extends Schema<"UInt16", number> {
     return Uint16Array.BYTES_PER_ELEMENT;
   }
 
-  static t<L extends string = string>(label?: L): u16<L> {
-    return new u16<L>();
+  static t<L extends string = string>(label?: L): UInt16<L> {
+    return new UInt16<L>();
   }
 }
 
-class i32<const Label extends string> extends Schema<"Int32", number> {
+class Int32<const Label extends string> extends Schema<"Int32", number> {
   encode(dataview: DataView, offset: number, value: number): void {
     dataview.setInt32(offset, value);
   }
@@ -114,12 +114,12 @@ class i32<const Label extends string> extends Schema<"Int32", number> {
     return Int32Array.BYTES_PER_ELEMENT;
   }
 
-  static t<L extends string = string>(label?: L): i32<L> {
-    return new i32<L>();
+  static t<L extends string = string>(label?: L): Int32<L> {
+    return new Int32<L>();
   }
 }
 
-class u32<const Label extends string> extends Schema<"UInt32", number> {
+class UInt32<const Label extends string> extends Schema<"UInt32", number> {
   encode(dataview: DataView, offset: number, value: number): void {
     dataview.setUint32(offset, value);
   }
@@ -132,12 +132,12 @@ class u32<const Label extends string> extends Schema<"UInt32", number> {
     return Uint32Array.BYTES_PER_ELEMENT;
   }
 
-  static t<L extends string = string>(label?: L): u32<L> {
-    return new u32<L>();
+  static t<L extends string = string>(label?: L): UInt32<L> {
+    return new UInt32<L>();
   }
 }
 
-class i64<const Label extends string> extends Schema<"Int64", bigint> {
+class Int64<const Label extends string> extends Schema<"Int64", bigint> {
   encode(dataview: DataView, offset: number, value: bigint): void {
     dataview.setBigInt64(offset, value, true);
   }
@@ -150,12 +150,12 @@ class i64<const Label extends string> extends Schema<"Int64", bigint> {
     return BigInt64Array.BYTES_PER_ELEMENT;
   }
 
-  static t<L extends string = string>(label?: L): i64<L> {
-    return new i64<L>();
+  static t<L extends string = string>(label?: L): Int64<L> {
+    return new Int64<L>();
   }
 }
 
-class u64<const Label extends string> extends Schema<"UInt64", bigint> {
+class UInt64<const Label extends string> extends Schema<"UInt64", bigint> {
   encode(dataview: DataView, offset: number, value: bigint): void {
     dataview.setBigUint64(offset, value, true);
   }
@@ -168,12 +168,12 @@ class u64<const Label extends string> extends Schema<"UInt64", bigint> {
     return BigInt64Array.BYTES_PER_ELEMENT;
   }
 
-  static t<L extends string = string>(label?: L): u64<L> {
-    return new u64<L>();
+  static t<L extends string = string>(label?: L): UInt64<L> {
+    return new UInt64<L>();
   }
 }
 
-class f32<const Label extends string> extends Schema<"Float32", number> {
+class Float32<const Label extends string> extends Schema<"Float32", number> {
   encode(dataview: DataView, offset: number, value: number): void {
     dataview.setFloat32(offset, value);
   }
@@ -186,12 +186,12 @@ class f32<const Label extends string> extends Schema<"Float32", number> {
     return Float32Array.BYTES_PER_ELEMENT;
   }
 
-  static t<L extends string = string>(label?: L): f32<L> {
-    return new f32<L>();
+  static t<L extends string = string>(label?: L): Float32<L> {
+    return new Float32<L>();
   }
 }
 
-class f64<const Label extends string> extends Schema<"Float64", number> {
+class Float64<const Label extends string> extends Schema<"Float64", number> {
   encode(dataview: DataView, offset: number, value: number): void {
     dataview.setFloat64(offset, value, true);
   }
@@ -204,12 +204,12 @@ class f64<const Label extends string> extends Schema<"Float64", number> {
     return Float64Array.BYTES_PER_ELEMENT;
   }
 
-  static t<L extends string = string>(label?: L): f64<L> {
-    return new f64<L>();
+  static t<L extends string = string>(label?: L): Float64<L> {
+    return new Float64<L>();
   }
 }
 
-class tuple<const Label extends string, const T extends Schema[]> extends Schema<"Tuple", RemapTuple<T>> {
+class Tuple<const Label extends string, const T extends Schema[]> extends Schema<"Tuple", RemapTuple<T>> {
   readonly name = "Tuple";
   readonly elements: T;
 
@@ -243,13 +243,13 @@ class tuple<const Label extends string, const T extends Schema[]> extends Schema
     return this.elements.reduce((acc, element, index) => acc + element.bytes(data[index]), 0);
   }
 
-  static t<L extends string, const T extends Schema[]>(label: L, children: T): tuple<L, T> {
-    return new tuple<L, T>(children);
+  static t<L extends string, const T extends Schema[]>(label: L, elements: T): Tuple<L, T> {
+    return new Tuple<L, T>(elements);
   }
 }
 
-class array<const Label extends string, const T extends Schema> extends Schema<"Array", T["t"][]> {
-  readonly name = "Array";
+class List<const Label extends string, const T extends Schema> extends Schema<"List", T["t"][]> {
+  readonly name = "List";
   readonly #kind: T;
 
   constructor(kind: T) {
@@ -284,91 +284,142 @@ class array<const Label extends string, const T extends Schema> extends Schema<"
     return this.#kind.bytes(data) * data.length + 4; // 4 to hold the count of items in the array
   }
 
-  static t<L extends string, const T extends Schema>(label: L, kind: T): array<L, T> {
-    return new array<L, T>(kind);
+  static t<L extends string, const T extends Schema>(label: L, kind: T): List<L, T> {
+    return new List<L, T>(kind);
   }
 }
 
 /**
  * Schema types that can be used for constructing a schema shape.
  */
-export const t = {
+export namespace t {
   /**
    * Int8 from `-128` to `127`
-   * 
+   *
    * 1 byte / 8-bit
+   * 
+   * @param label Optional label describing the data held in this number.
+   * @returns A Int8 schema
+   * @example const schema = t.i8()
    */
-  i8: i8.t,
+  export const i8: <L extends string = string>(label?: L) => Int8<L> = Int8.t;
   /**
    * UInt8 from `0` to `255`
-   * 
+   *
    * 1 byte / 8-bit
+   * 
+   * @param label Optional label describing the data held in this number.
+   * @returns A UInt8 schema
+   * @example const schema = t.u8()
    */
-  u8: u8.t,
+  export const u8: <L extends string = string>(label?: L) => UInt8<L> = UInt8.t;
   /**
    * Int16 from `-32,768` to `32,767`
-   * 
+   *
    * 2 bytes / 16-bit
+   * 
+   * @param label Optional label describing the data held in this number.
+   * @returns A Int16 schema
+   * @example const schema = t.i16()
    */
-  i16: i16.t,
+  export const i16: <L extends string = string>(label?: L) => Int16<L> = Int16.t;
   /**
    * UInt16 from `0` to `65,535`
-   * 
+   *
    * 2 bytes / 16-bit
+   * 
+   * @param label Optional label describing the data held in this number.
+   * @returns A UInt16 schema
+   * @example const schema = t.u16()
    */
-  u16: u16.t,
+  export const u16: <L extends string = string>(label?: L) => UInt16<L> = UInt16.t;
   /**
    * Int32 from `-2,147,483,648` to `2,147,483,647`
-   * 
+   *
    * 4 bytes / 32-bit
+   * 
+   * @param label Optional label describing the data held in this number.
+   * @returns A Int32 schema
+   * @example const schema = t.i32()
    */
-  i32: i32.t,
+  export const i32: <L extends string = string>(label?: L) => Int32<L> = Int32.t;
   /**
    * UInt32 from `0` to `4,294,967,295`
-   * 
+   *
    * 4 bytes / 32-bit
+   *
+   * @param label Optional label describing the data held in this number.
+   * @returns A UInt32 schema
+   * @example const schema = t.u32()
    */
-  u32: u32.t,
+  export const u32: <L extends string = string>(label?: L) => UInt32<L> = UInt32.t;
   /**
    * Int64 (aka BigInt) from `-9,223,372,036,854,775,808` to `9,223,372,036,854,775,807`
-   * 
+   *
    * 8 bytes / 64-bit
+   *
+   * @param label Optional label describing the data held in this number.
+   * @returns A Int64 schema
+   * @example const schema = t.i64()
    */
-  i64: i64.t,
+  export const i64: <L extends string = string>(label?: L) => Int64<L> = Int64.t;
   /**
    * UInt64 (aka BigUInt) from `0` to `18,446,744,073,709,551,615`
-   * 
+   *
    * 8 bytes / 64-bit
+   *
+   * @param label Optional label describing the data held in this number.
+   * @returns A UInt64 schema
+   * @example const schema = t.u64()
    */
-  u64: u64.t,
+  export const u64: <L extends string = string>(label?: L) => UInt64<L> = UInt64.t;
   /**
    * Float32 - a 32-bit single-precision floating-point number
-   * 
+   *
    * 4 bytes / 32-bit
+   *
+   * @param label Optional label describing the data held in this number.
+   * @returns A Float32 schema
+   * @example const schema = t.f32()
    */
-  f32: f32.t,
+  export const f32: <L extends string = string>(label?: L) => Float32<L> = Float32.t;
   /**
    * Float64 - a 64-bit double-precision floating-point number
-   * 
+   *
    * 8 bytes / 64-bit
+   *
+   * @param label Optional label describing the data held in this number.
+   * @returns A Float64 schema
+   * @example const schema = t.f64()
    */
-  f64: f64.t,
+  export const f64: <L extends string = string>(label?: L) => Float64<L> = Float64.t;
   /**
    * Tuple - fixed length array of any number of other different schemas
-   * 
+   *
    * Bytes depends on bytes of schemas included
+   *
+   * @param label Required label describing the data held in the tuple.
+   * @param elements Array of schema types.
+   * @returns An tuple schema bound to the types specified in the elements array.
+   * @example const schema = t.tuple("Vector", [t.u8("x"), t.u8("y")])
    */
-  tuple: tuple.t,
+  export const tuple: <L extends string, const T extends Schema[]>(label: L, elements: T) => Tuple<L, T> = Tuple.t;
   /**
    * Array - dynamic length array of only one other type of schema, which can include Tuples.
-   * 
+   *
    * Bytes depends on amount of items in the array at encode time.
+   *
+   * @param label Required label describing the data held in the array.
+   * @param kind The schema type of every child in the array.
+   * @returns An array schema bound to a certain type.
+   * @example const schema = t.array("My List", t.u8())
    */
-  array: array.t,
+  export const array: <L extends string, const T extends Schema>(label: L, kind: T) => List<L, T> = List.t;
+
   // union: union.t // TODO
   // enum: enum.t // TODO
   // string: string.t // TODO
-} as const;
+}
 
 /**
  * Helper type for extracting the Schema base type from the Schema.

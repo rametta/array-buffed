@@ -36,28 +36,30 @@ Step 1: Define a schema
 ```ts
 import { t } from '@rametta/array-buffed'
 
-const MouseSchema = t.tuple("Mouse", [
-  t.u8("X"),
-  t.u8("Y")
+const schema = t.tuple("Vector", [
+  t.u32("x"),
+  t.u32("y"),
+  t.u32("z"),
 ])
 ```
 
-Step 2: Encode some data using the schema
+Step 2: Encode data using the schema
 
 ```ts
 import { t, encode } from '@rametta/array-buffed'
 
-const buffer = encode(MouseSchema, [50, 100])
+const buffer = encode(schema, [50, 100, 1])
 ```
 
-Step 3: Decode some binary data using the schema
+Step 3: Decode binary data using the schema
 
 ```ts
 import { t, decode } from '@rametta/array-buffed'
 
-const [x,y] = decode(MouseSchema, buffer)
+const [x,y,z] = decode(schema, buffer)
 // x: 50
 // y: 100
+// z: 1
 ```
 
 ## Creating Schemas
@@ -68,7 +70,7 @@ Creating schemas is roughly based on how the data is stored in binary, so we do 
 import { t } from '@rametta/array-buffed'
 
 // labels are optional for primitives, but useful for describing your data
-const MySchema = t.tuple("World", [
+const schema = t.tuple("World", [
   // tuples are fixed length arrays
   t.tuple("world", [t.i32("x"), t.i32("y")]),
   t.tuple("color", [t.u8("r"), t.u8("g"), t.u8("b")])
@@ -88,16 +90,16 @@ Use the `Infer` helper type for extracting the Typescript type for any defined s
 ```ts
 import { t, type Infer } from '@rametta/array-buffed'
 
-const MySchema = t.tuple("My Tuple", [
+const schema = t.tuple("My Tuple", [
   t.u8(),
   t.f64("My Float"),
   t.array("My Array", t.i8())
 ])
 
-type MySchema = Infer<typeof MySchema>
-//   MySchema = [number, number, Array<number>]
+type Schema = Infer<typeof schema>
+//   Schema = [number, number, Array<number>]
 
-const data: MySchema = [101, 3.5, [-4, 7, 9, 100, 74]] // type check compiles - woohoo
+const data: Schema = [101, 3.5, [-4, 7, 9, 100, 74]] // type check compiles - woohoo
 ```
 
 ## All Schemas
