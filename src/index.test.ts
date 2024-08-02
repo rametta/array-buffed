@@ -551,6 +551,50 @@ test("bytes", () => {
   expect(union.bytes([0, 0])).toBe(1 + 1);
   expect(union.bytes([1, 0])).toBe(1 + 8);
   expect(union.bytes([2, "hello"])).toBe(1 + 4 + 5);
+
+  expect(t.buffer().bytes(new ArrayBuffer(0))).toBe(4);
+  expect(t.buffer().bytes(new ArrayBuffer(4))).toBe(8);
+  expect(t.buffer().bytes(new ArrayBuffer(100))).toBe(104);
+});
+
+test("buffer - uint8", () => {
+  const schema = t.buffer();
+  const data: Infer<typeof schema> = new ArrayBuffer(5 * Uint8Array.BYTES_PER_ELEMENT);
+
+  const view = new DataView(data);
+  view.setUint8(0, 5);
+  view.setUint8(1, 10);
+  view.setUint8(2, 15);
+  view.setUint8(3, 20);
+  view.setUint8(4, 25);
+
+  const bytes = schema.bytes(data);
+  expect(bytes).toBe(9);
+  const encoded = encode(schema, data);
+  expect(encoded.byteLength).toBe(bytes);
+
+  const decoded = decode(schema, encoded);
+  expect(decoded).toStrictEqual(data);
+});
+
+test("buffer - int32", () => {
+  const schema = t.buffer();
+  const data: Infer<typeof schema> = new ArrayBuffer(5 * Int32Array.BYTES_PER_ELEMENT);
+
+  const view = new DataView(data);
+  view.setInt32(0, 50);
+  view.setInt32(1, 60);
+  view.setInt32(2, -70);
+  view.setInt32(3, -90);
+  view.setInt32(4, -1000);
+
+  const bytes = schema.bytes(data);
+  expect(bytes).toBe(4 + 5 * 4);
+  const encoded = encode(schema, data);
+  expect(encoded.byteLength).toBe(bytes);
+
+  const decoded = decode(schema, encoded);
+  expect(decoded).toStrictEqual(data);
 });
 
 test("union", () => {

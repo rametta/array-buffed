@@ -107,6 +107,11 @@ const data: Schema = [101, 3.5, [-4, 7, 9, 100, 74]] // type check compiles - wo
 
 ## All Schemas
 
+- String - [`t.str()`](https://jsr.io/@rametta/array-buffed/doc/~/t.str)
+- Tuple - [`t.tuple()`](https://jsr.io/@rametta/array-buffed/doc/~/t.tuple)
+- Array - [`t.array()`](https://jsr.io/@rametta/array-buffed/doc/~/t.array)
+- Union - [`t.union()`](https://jsr.io/@rametta/array-buffed/doc/~/t.union)
+- Buffer - [`t.buffer()`](https://jsr.io/@rametta/array-buffed/doc/~/t.buffer)
 - UInt8 - [`t.u8()`](https://jsr.io/@rametta/array-buffed/doc/~/t.u8)
 - UInt16 - [`t.u16()`](https://jsr.io/@rametta/array-buffed/doc/~/t.u16)
 - UInt32 - [`t.u32()`](https://jsr.io/@rametta/array-buffed/doc/~/t.u32)
@@ -117,9 +122,5 @@ const data: Schema = [101, 3.5, [-4, 7, 9, 100, 74]] // type check compiles - wo
 - Int64 - [`t.i64()`](https://jsr.io/@rametta/array-buffed/doc/~/t.i64)
 - Float32 - [`t.f32()`](https://jsr.io/@rametta/array-buffed/doc/~/t.f32)
 - Float64 - [`t.f64()`](https://jsr.io/@rametta/array-buffed/doc/~/t.f64)
-- String - [`t.str()`](https://jsr.io/@rametta/array-buffed/doc/~/t.str)
-- Tuple - [`t.tuple()`](https://jsr.io/@rametta/array-buffed/doc/~/t.tuple)
-- Array - [`t.array()`](https://jsr.io/@rametta/array-buffed/doc/~/t.array)
-- Union - [`t.union()`](https://jsr.io/@rametta/array-buffed/doc/~/t.union)
 
 [Full docs on JSR](https://jsr.io/@rametta/array-buffed/doc)

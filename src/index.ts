@@ -381,6 +381,41 @@ class Union<const Label extends string, const T extends Schema[]> extends Schema
   }
 }
 
+class Buffer<const Label extends string> extends Schema<"Buffer", ArrayBufferLike> {
+  readonly name = "Buffer";
+
+  encode(view: DataView, offset: number, data: ArrayBufferLike): void {
+    view.setUint32(offset, data.byteLength);
+
+    let localOffset = Uint32Array.BYTES_PER_ELEMENT;
+    for (const byte of new Uint8Array(data)) {
+      view.setUint8(offset + localOffset, byte);
+      localOffset += Uint8Array.BYTES_PER_ELEMENT;
+    }
+  }
+
+  decode(view: DataView, offset: number): ArrayBufferLike {
+    const length = view.getUint32(offset);
+    const uint8array = new Uint8Array(length);
+
+    let localOffset = Uint32Array.BYTES_PER_ELEMENT;
+    for (let i = 0; i < length; i++) {
+      uint8array[i] = view.getUint8(localOffset + offset);
+      localOffset += Uint8Array.BYTES_PER_ELEMENT;
+    }
+
+    return uint8array.buffer;
+  }
+
+  bytes(buffer: ArrayBufferLike): number {
+    return buffer.byteLength + Uint32Array.BYTES_PER_ELEMENT;
+  }
+
+  static t<L extends string>(label?: L): Buffer<L> {
+    return new Buffer<L>();
+  }
+}
+
 /**
  * Schema types that can be used for constructing a schema shape.
  */
@@ -526,6 +561,7 @@ export namespace t {
    * @param schemas An array of schemas that can possibly take this place in the array buffer
    * @returns A Union schema
    * @example
+   *
    * const schema = t.union("My Union", [t.u8(), t.i64()])
    * // This schema can encode either a u8 or a i64
    * const data: Infer<typeof schema> = [0, 255] // first item in the union, 0 is the index of the union choices, so u8 gere
@@ -535,6 +571,19 @@ export namespace t {
    * encode(schema, data) // or data2
    */
   export const union: <L extends string, const T extends Schema[]>(label: L, schemas: T) => Union<L, T> = Union.t;
+
+  /**
+   * Buffer - an existing array buffer to include with the other data.
+   *
+   * @param label Optional label describing the data in the buffer
+   * @returns A buffer schema
+   * @example
+   *
+   * const schema = t.buffer()
+   * const data: Infer<typeof schema> = new ArrayBuffer(20)
+   * schema.bytes(data) // 24 -- 20 + 4 bytes for the byte length
+   */
+  export const buffer: <L extends string>(label?: L) => Buffer<L> = Buffer.t;
 }
 
 /**
